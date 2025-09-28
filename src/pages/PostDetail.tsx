@@ -4,10 +4,21 @@ import { posts } from "@/data/posts";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import AuthorBio from "@/components/AuthorBio";
+import SocialShare from "@/components/SocialShare";
+import BlogPostCard from "@/components/BlogPostCard";
 
 const PostDetail = () => {
   const { id } = useParams<{ id: string }>();
   const post = posts.find((p) => p.id === Number(id));
+
+  const relatedPosts = post
+    ? posts
+        .filter(
+          (p) => p.category === post.category && p.id !== post.id,
+        )
+        .slice(0, 3)
+    : [];
 
   if (!post) {
     return (
@@ -58,12 +69,27 @@ const PostDetail = () => {
               {post.title}
             </h1>
             <p className="text-lg text-muted-foreground">
-              By {post.author} on {post.date}
+              By {post.author.name} on {post.date}
             </p>
             <div className="mt-8 text-foreground/80 whitespace-pre-wrap">
               {post.content}
             </div>
           </article>
+
+          <SocialShare url={window.location.href} title={post.title} />
+
+          <AuthorBio author={post.author} />
+
+          {relatedPosts.length > 0 && (
+            <div className="mt-16">
+              <h2 className="text-2xl font-bold mb-6">Related Posts</h2>
+              <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                {relatedPosts.map((relatedPost) => (
+                  <BlogPostCard key={relatedPost.id} post={relatedPost} />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </div>

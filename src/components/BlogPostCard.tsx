@@ -34,7 +34,7 @@ const BlogPostCard = ({ post }: BlogPostCardProps) => {
       <CardHeader>
         <CardTitle>{post.title}</CardTitle>
         <CardDescription>
-          By {post.author} on {post.date}
+          By {post.author.name} on {post.date}
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-grow">

@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import { PostForm, PostFormValues } from "@/components/PostForm";
 import { posts } from "@/data/posts";
 import { showSuccess } from "@/utils/toast";
+import { Author } from "@/types";
 
 const CreatePost = () => {
   const navigate = useNavigate();
@@ -16,13 +17,21 @@ const CreatePost = () => {
       imageUrl = URL.createObjectURL(imageFile);
     }
 
+    // For now, we'll create a default author profile for new posts.
+    const newAuthor: Author = {
+      name: values.author,
+      avatarUrl: `https://i.pravatar.cc/150?u=${values.author}`,
+      bio: "A passionate writer sharing their thoughts with the world.",
+    };
+
     const newPost = {
       id: newId,
       title: values.title,
-      author: values.author,
+      author: newAuthor,
       content: values.content,
       date: new Date().toISOString().split("T")[0],
       imageUrl,
+      category: "General", // Default category for new posts
     };
     posts.unshift(newPost);
     showSuccess("Post created successfully!");

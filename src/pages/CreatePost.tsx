@@ -9,10 +9,20 @@ const CreatePost = () => {
 
   const handleCreatePost = (values: PostFormValues) => {
     const newId = Math.max(...posts.map((p) => p.id), 0) + 1;
+
+    let imageUrl: string | undefined = undefined;
+    if (values.image && values.image.length > 0) {
+      const imageFile = values.image[0];
+      imageUrl = URL.createObjectURL(imageFile);
+    }
+
     const newPost = {
       id: newId,
-      ...values,
+      title: values.title,
+      author: values.author,
+      content: values.content,
       date: new Date().toISOString().split("T")[0],
+      imageUrl,
     };
     posts.unshift(newPost);
     showSuccess("Post created successfully!");

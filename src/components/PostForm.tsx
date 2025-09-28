@@ -19,6 +19,7 @@ const formSchema = z.object({
   title: z.string().min(2, "Title must be at least 2 characters."),
   author: z.string().min(2, "Author name must be at least 2 characters."),
   content: z.string().min(10, "Content must be at least 10 characters."),
+  image: z.any().optional(),
 });
 
 export type PostFormValues = z.infer<typeof formSchema>;
@@ -61,6 +62,23 @@ export function PostForm({ onSubmit }: PostFormProps) {
               <FormLabel>Author</FormLabel>
               <FormControl>
                 <Input placeholder="Your Name" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="image"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Blog Post Image</FormLabel>
+              <FormControl>
+                <Input
+                  type="file"
+                  accept="image/png, image/jpeg, image/gif"
+                  onChange={(e) => field.onChange(e.target.files)}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

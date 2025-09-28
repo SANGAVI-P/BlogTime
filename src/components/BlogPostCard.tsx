@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 interface BlogPostCardProps {
   post: Post;
@@ -17,6 +18,15 @@ interface BlogPostCardProps {
 const BlogPostCard = ({ post }: BlogPostCardProps) => {
   return (
     <Card className="flex flex-col">
+      {post.imageUrl && (
+        <AspectRatio ratio={16 / 9}>
+          <img
+            src={post.imageUrl}
+            alt={post.title}
+            className="rounded-t-lg object-cover w-full h-full"
+          />
+        </AspectRatio>
+      )}
       <CardHeader>
         <CardTitle>{post.title}</CardTitle>
         <CardDescription>

@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import { posts } from "@/data/posts";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 const PostDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -39,6 +40,19 @@ const PostDetail = () => {
               Back to All Posts
             </Link>
           </Button>
+
+          {post.imageUrl && (
+            <div className="mb-8 overflow-hidden rounded-lg">
+              <AspectRatio ratio={16 / 9}>
+                <img
+                  src={post.imageUrl}
+                  alt={post.title}
+                  className="object-cover w-full h-full"
+                />
+              </AspectRatio>
+            </div>
+          )}
+
           <article className="prose prose-invert max-w-none">
             <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl text-foreground">
               {post.title}

@@ -8,9 +8,14 @@ const Header = () => {
         <Link to="/" className="text-2xl font-bold text-foreground">
           Blogtime
         </Link>
-        <Button asChild>
-          <Link to="/new-post">New Post</Link>
-        </Button>
+        <nav className="flex items-center gap-4">
+          <Button asChild variant="ghost">
+            <Link to="/about">About</Link>
+          </Button>
+          <Button asChild>
+            <Link to="/new-post">New Post</Link>
+          </Button>
+        </nav>
       </div>
     </header>
   );

@@ -5,4 +5,5 @@ export interface Post {
   author: string;
   date: string;
   imageUrl?: string;
+  category: string;
 }

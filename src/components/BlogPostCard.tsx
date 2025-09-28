@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Badge } from "@/components/ui/badge";
 
 interface BlogPostCardProps {
   post: Post;
@@ -18,15 +19,18 @@ interface BlogPostCardProps {
 const BlogPostCard = ({ post }: BlogPostCardProps) => {
   return (
     <Card className="flex flex-col">
-      {post.imageUrl && (
-        <AspectRatio ratio={16 / 9}>
-          <img
-            src={post.imageUrl}
-            alt={post.title}
-            className="rounded-t-lg object-cover w-full h-full"
-          />
-        </AspectRatio>
-      )}
+      <div className="relative">
+        {post.imageUrl && (
+          <AspectRatio ratio={16 / 9}>
+            <img
+              src={post.imageUrl}
+              alt={post.title}
+              className="rounded-t-lg object-cover w-full h-full"
+            />
+          </AspectRatio>
+        )}
+        <Badge className="absolute top-2 right-2">{post.category}</Badge>
+      </div>
       <CardHeader>
         <CardTitle>{post.title}</CardTitle>
         <CardDescription>

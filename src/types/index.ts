@@ -12,4 +12,5 @@ export interface Post {
   date: string;
   imageUrl?: string;
   category: string;
+  isNew?: boolean;
 }

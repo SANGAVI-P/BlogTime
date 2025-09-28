@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { format } from "date-fns";
+import { format, differenceInDays } from "date-fns";
 import BlogPostCard from "@/components/BlogPostCard";
 import Header from "@/components/Header";
 import { Input } from "@/components/ui/input";
@@ -36,19 +36,23 @@ const fetchPosts = async (): Promise<Post[]> => {
     throw new Error(error.message);
   }
 
-  return data.map((post) => ({
-    id: post.id,
-    title: post.title,
-    content: post.content,
-    author: {
-      name: post.author_name,
-      avatarUrl: post.author_avatar_url,
-      bio: post.author_bio,
-    },
-    date: format(new Date(post.created_at), "yyyy-MM-dd"),
-    imageUrl: post.image_url,
-    category: post.category,
-  }));
+  return data.map((post) => {
+    const postDate = new Date(post.created_at);
+    return {
+      id: post.id,
+      title: post.title,
+      content: post.content,
+      author: {
+        name: post.author_name,
+        avatarUrl: post.author_avatar_url,
+        bio: post.author_bio,
+      },
+      date: format(postDate, "yyyy-MM-dd"),
+      imageUrl: post.image_url,
+      category: post.category,
+      isNew: differenceInDays(new Date(), postDate) <= 3,
+    };
+  });
 };
 
 const Index = () => {
@@ -134,18 +138,23 @@ const Index = () => {
         )}
 
         {filteredPosts && filteredPosts.length > 0 ? (
-          <motion.div
-            className="grid gap-8 md:grid-cols-2 lg:grid-cols-3"
-            variants={containerVariants}
-            initial="hidden"
-            animate="show"
-          >
-            {filteredPosts.map((post) => (
-              <motion.div key={post.id} variants={itemVariants}>
-                <BlogPostCard post={post} />
-              </motion.div>
-            ))}
-          </motion.div>
+          <div>
+            <h1 className="text-3xl font-bold mb-8 text-center text-foreground">
+              Latest Posts
+            </h1>
+            <motion.div
+              className="grid gap-8 md:grid-cols-2 lg:grid-cols-3"
+              variants={containerVariants}
+              initial="hidden"
+              animate="show"
+            >
+              {filteredPosts.map((post) => (
+                <motion.div key={post.id} variants={itemVariants}>
+                  <BlogPostCard post={post} />
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
         ) : (
           !isLoading && (
             <div className="text-center py-16">

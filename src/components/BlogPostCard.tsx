@@ -36,6 +36,11 @@ const BlogPostCard = ({ post }: BlogPostCardProps) => {
             </AspectRatio>
           )}
           <Badge className="absolute top-2 right-2">{post.category}</Badge>
+          {post.isNew && (
+            <Badge variant="destructive" className="absolute top-2 left-2">
+              New!
+            </Badge>
+          )}
         </div>
         <CardHeader>
           <CardTitle>{post.title}</CardTitle>

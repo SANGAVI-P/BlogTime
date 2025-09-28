@@ -8,14 +8,15 @@ const CreatePost = () => {
   const navigate = useNavigate();
 
   const handleCreatePost = (values: PostFormValues) => {
+    const newId = Math.max(...posts.map((p) => p.id), 0) + 1;
     const newPost = {
-      id: posts.length + 1,
+      id: newId,
       ...values,
       date: new Date().toISOString().split("T")[0],
     };
     posts.unshift(newPost);
     showSuccess("Post created successfully!");
-    navigate("/");
+    navigate(`/post/${newPost.id}`);
   };
 
   return (

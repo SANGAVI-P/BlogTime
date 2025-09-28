@@ -24,7 +24,7 @@ const BlogPostCard = ({ post }: BlogPostCardProps) => {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-grow">
-        <p className="text-gray-700 dark:text-gray-300">
+        <p className="text-muted-foreground">
           {post.content.substring(0, 120)}...
         </p>
       </CardContent>

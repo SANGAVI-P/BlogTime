@@ -4,7 +4,7 @@ import { posts } from "@/data/posts";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-background">
       <Header />
       <main className="container mx-auto py-12 px-4">
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">

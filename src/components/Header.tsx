@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 
 const Header = () => {
   return (
-    <header className="py-4 px-6 border-b bg-white dark:bg-gray-800">
+    <header className="py-4 px-6 border-b bg-background">
       <div className="container mx-auto flex justify-between items-center">
-        <Link to="/" className="text-2xl font-bold text-gray-900 dark:text-white">
+        <Link to="/" className="text-2xl font-bold text-foreground">
           My Awesome Blog
         </Link>
         <Button asChild>

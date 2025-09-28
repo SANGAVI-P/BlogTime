@@ -5,6 +5,22 @@ import { posts } from "@/data/posts";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  show: { y: 0, opacity: 1 },
+};
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -59,11 +75,18 @@ const Index = () => {
         </div>
 
         {filteredPosts.length > 0 ? (
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <motion.div
+            className="grid gap-8 md:grid-cols-2 lg:grid-cols-3"
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+          >
             {filteredPosts.map((post) => (
-              <BlogPostCard key={post.id} post={post} />
+              <motion.div key={post.id} variants={itemVariants}>
+                <BlogPostCard post={post} />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         ) : (
           <div className="text-center py-16">
             <h2 className="text-2xl font-semibold text-foreground">

@@ -7,6 +7,7 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import AuthorBio from "@/components/AuthorBio";
 import SocialShare from "@/components/SocialShare";
 import BlogPostCard from "@/components/BlogPostCard";
+import { motion } from "framer-motion";
 
 const PostDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -53,7 +54,12 @@ const PostDetail = () => {
           </Button>
 
           {post.imageUrl && (
-            <div className="mb-8 overflow-hidden rounded-lg">
+            <motion.div
+              className="mb-8 overflow-hidden rounded-lg"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
               <AspectRatio ratio={16 / 9}>
                 <img
                   src={post.imageUrl}
@@ -61,10 +67,15 @@ const PostDetail = () => {
                   className="object-cover w-full h-full"
                 />
               </AspectRatio>
-            </div>
+            </motion.div>
           )}
 
-          <article className="prose prose-invert max-w-none">
+          <motion.article
+            className="prose prose-invert max-w-none"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
             <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl text-foreground">
               {post.title}
             </h1>
@@ -74,21 +85,38 @@ const PostDetail = () => {
             <div className="mt-8 text-foreground/80 whitespace-pre-wrap">
               {post.content}
             </div>
-          </article>
+          </motion.article>
 
-          <SocialShare url={window.location.href} title={post.title} />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            <SocialShare url={window.location.href} title={post.title} />
+          </motion.div>
 
-          <AuthorBio author={post.author} />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+          >
+            <AuthorBio author={post.author} />
+          </motion.div>
 
           {relatedPosts.length > 0 && (
-            <div className="mt-16">
+            <motion.div
+              className="mt-16"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+            >
               <h2 className="text-2xl font-bold mb-6">Related Posts</h2>
               <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
                 {relatedPosts.map((relatedPost) => (
                   <BlogPostCard key={relatedPost.id} post={relatedPost} />
                 ))}
               </div>
-            </div>
+            </motion.div>
           )}
         </div>
       </main>

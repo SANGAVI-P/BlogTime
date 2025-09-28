@@ -1,6 +1,6 @@
 import { Post } from "@/types";
 
-export const posts: Post[] = [
+export let posts: Post[] = [
   {
     id: 1,
     title: "Getting Started with React",

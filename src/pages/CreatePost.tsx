@@ -1,41 +1,56 @@
 import { useNavigate } from "react-router-dom";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Header from "@/components/Header";
 import { PostForm, PostFormValues } from "@/components/PostForm";
-import { posts } from "@/data/posts";
-import { showSuccess } from "@/utils/toast";
-import { Author } from "@/types";
+import { supabase } from "@/integrations/supabase/client";
+import { showSuccess, showError } from "@/utils/toast";
+
+const createPostInDb = async (values: PostFormValues) => {
+  const newAuthor = {
+    name: values.author,
+    avatarUrl: `https://i.pravatar.cc/150?u=${encodeURIComponent(values.author)}`,
+    bio: "A passionate writer sharing their thoughts with the world.",
+  };
+
+  const { data, error } = await supabase
+    .from("posts")
+    .insert([
+      {
+        title: values.title,
+        content: values.content,
+        author_name: newAuthor.name,
+        author_avatar_url: newAuthor.avatarUrl,
+        author_bio: newAuthor.bio,
+        category: "General",
+      },
+    ])
+    .select()
+    .single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+  return data;
+};
 
 const CreatePost = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: createPostInDb,
+    onSuccess: (data) => {
+      showSuccess("Post created successfully!");
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      navigate(`/post/${data.id}`);
+    },
+    onError: (error) => {
+      showError(`Failed to create post: ${error.message}`);
+    },
+  });
 
   const handleCreatePost = (values: PostFormValues) => {
-    const newId = Math.max(...posts.map((p) => p.id), 0) + 1;
-
-    let imageUrl: string | undefined = undefined;
-    if (values.image && values.image.length > 0) {
-      const imageFile = values.image[0];
-      imageUrl = URL.createObjectURL(imageFile);
-    }
-
-    // For now, we'll create a default author profile for new posts.
-    const newAuthor: Author = {
-      name: values.author,
-      avatarUrl: `https://i.pravatar.cc/150?u=${values.author}`,
-      bio: "A passionate writer sharing their thoughts with the world.",
-    };
-
-    const newPost = {
-      id: newId,
-      title: values.title,
-      author: newAuthor,
-      content: values.content,
-      date: new Date().toISOString().split("T")[0],
-      imageUrl,
-      category: "General", // Default category for new posts
-    };
-    posts.unshift(newPost);
-    showSuccess("Post created successfully!");
-    navigate(`/post/${newPost.id}`);
+    mutation.mutate(values);
   };
 
   return (
@@ -46,7 +61,10 @@ const CreatePost = () => {
           <h1 className="text-3xl font-bold mb-8 text-foreground">
             Create a New Post
           </h1>
-          <PostForm onSubmit={handleCreatePost} />
+          <PostForm
+            onSubmit={handleCreatePost}
+            isSubmitting={mutation.isPending}
+          />
         </div>
       </main>
     </div>

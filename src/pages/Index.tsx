@@ -1,11 +1,15 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { format } from "date-fns";
 import BlogPostCard from "@/components/BlogPostCard";
 import Header from "@/components/Header";
-import { posts } from "@/data/posts";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
 import { motion } from "framer-motion";
+import { supabase } from "@/integrations/supabase/client";
+import { Post } from "@/types";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -22,15 +26,45 @@ const itemVariants = {
   show: { y: 0, opacity: 1 },
 };
 
+const fetchPosts = async (): Promise<Post[]> => {
+  const { data, error } = await supabase
+    .from("posts")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data.map((post) => ({
+    id: post.id,
+    title: post.title,
+    content: post.content,
+    author: {
+      name: post.author_name,
+      avatarUrl: post.author_avatar_url,
+      bio: post.author_bio,
+    },
+    date: format(new Date(post.created_at), "yyyy-MM-dd"),
+    imageUrl: post.image_url,
+    category: post.category,
+  }));
+};
+
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(
-    null,
-  );
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  const categories = [...new Set(posts.map((post) => post.category))];
+  const { data: posts, isLoading, isError } = useQuery({
+    queryKey: ["posts"],
+    queryFn: fetchPosts,
+  });
 
-  const filteredPosts = posts.filter((post) => {
+  const categories = posts
+    ? [...new Set(posts.map((post) => post.category).filter(Boolean))]
+    : [];
+
+  const filteredPosts = posts?.filter((post) => {
     const matchesCategory = selectedCategory
       ? post.category === selectedCategory
       : true;
@@ -74,7 +108,32 @@ const Index = () => {
           </div>
         </div>
 
-        {filteredPosts.length > 0 ? (
+        {isLoading && (
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="space-y-4">
+                <Skeleton className="h-[225px] w-full rounded-lg" />
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {isError && (
+          <div className="text-center py-16">
+            <h2 className="text-2xl font-semibold text-destructive">
+              Failed to load posts
+            </h2>
+            <p className="text-muted-foreground mt-2">
+              Please try refreshing the page.
+            </p>
+          </div>
+        )}
+
+        {filteredPosts && filteredPosts.length > 0 ? (
           <motion.div
             className="grid gap-8 md:grid-cols-2 lg:grid-cols-3"
             variants={containerVariants}
@@ -88,14 +147,16 @@ const Index = () => {
             ))}
           </motion.div>
         ) : (
-          <div className="text-center py-16">
-            <h2 className="text-2xl font-semibold text-foreground">
-              No posts found
-            </h2>
-            <p className="text-muted-foreground mt-2">
-              Try adjusting your search or category filters.
-            </p>
-          </div>
+          !isLoading && (
+            <div className="text-center py-16">
+              <h2 className="text-2xl font-semibold text-foreground">
+                No posts found
+              </h2>
+              <p className="text-muted-foreground mt-2">
+                Try adjusting your search or category filters, or create the first post!
+              </p>
+            </div>
+          )
         )}
       </main>
     </div>
